@@ -10,8 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "@radix-ui/react-accordion": "^1.2.11",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-toggle": "^1.1.9",
+    "@tailwindcss/vite": "^4.1.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.525.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.58.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.11",
+    "zod": "^3.25.67",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
