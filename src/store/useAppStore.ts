@@ -19,7 +19,25 @@ interface AppState {
     isAIAssistantEnabled: boolean;
 
     // Actions
-    setActiveBorrower: (borrower: BorrowerDetail | null) => void;
+    setActiveBorrower: (borrower: {
+        id: string;
+        name: string;
+        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
+        amount: number;
+        status: "New" | "In Review" | "Approved" | "Renew"
+    } | {
+        id: string;
+        name: string;
+        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
+        amount: number;
+        status: "New" | "In Review" | "Approved" | "Renew"
+    } | {
+        id: string;
+        name: string;
+        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
+        amount: number;
+        status: "New" | "In Review" | "Approved" | "Renew"
+    } | BorrowerPipelineItem) => void;
     setActiveTab: (tab: LoanStatus) => void;
     setBorrowerPipeline: (
         pipeline: AppState['borrowerPipeline']
