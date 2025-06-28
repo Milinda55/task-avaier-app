@@ -1,15 +1,19 @@
 export type LoanStatus = 'New' | 'In Review' | 'Approved' | 'Renew';
-export type LoanType = 'Home Loan' | 'Personal Loan' | 'Auto Loan';
+export type LoanType = 'Home Loan' | 'Personal Loan' | 'Auto Loan' | 'Investment Loan';
 
-export interface BorrowerPipelineItem {
+export interface BorrowerBase {
     id: string;
     name: string;
     loan_type: LoanType;
-    amount: number;
     status: LoanStatus;
 }
 
-export interface BorrowerDetail extends BorrowerPipelineItem {
+export interface BorrowerPipelineItem extends BorrowerBase{
+    amount: number;
+
+}
+
+export interface BorrowerDetail extends BorrowerBase {
     email: string;
     phone: string;
     loan_amount: number;
@@ -20,6 +24,19 @@ export interface BorrowerDetail extends BorrowerPipelineItem {
     source_of_funds: string;
     risk_signal?: string;
     ai_flags?: string[];
+}
+
+export interface Broker {
+    name: string;
+    deals: number;
+    approval_rate: string;
+    pending: number;
+}
+
+export interface WorkflowStep {
+    id: number;
+    title: string;
+    completed: boolean;
 }
 
 export interface PipelineResponse {
