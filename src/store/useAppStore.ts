@@ -14,40 +14,25 @@ interface AppState {
         approved: BorrowerPipelineItem[];
     };
     activeTab: LoanStatus;
+    loading: boolean;
 
     // UI state
     isAIAssistantEnabled: boolean;
 
     // Actions
-    setActiveBorrower: (borrower: {
-        id: string;
-        name: string;
-        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
-        amount: number;
-        status: "New" | "In Review" | "Approved" | "Renew"
-    } | {
-        id: string;
-        name: string;
-        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
-        amount: number;
-        status: "New" | "In Review" | "Approved" | "Renew"
-    } | {
-        id: string;
-        name: string;
-        loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
-        amount: number;
-        status: "New" | "In Review" | "Approved" | "Renew"
-    } | BorrowerPipelineItem) => void;
+    setActiveBorrower: (borrower: BorrowerDetail | null) => void;
     setActiveTab: (tab: LoanStatus) => void;
     setBorrowerPipeline: (
         pipeline: AppState['borrowerPipeline']
     ) => void;
+    setLoading: (loading: boolean) => void;
     toggleAIAssistant: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
     // Initial state
     activeBorrower: null,
+    loading: false,
     borrowerPipeline: {
         new: [],
         in_review: [],
@@ -62,5 +47,6 @@ export const useAppStore = create<AppState>((set) => ({
     setBorrowerPipeline: (pipeline) => set({ borrowerPipeline: pipeline }),
     toggleAIAssistant: () => set((state) => ({
         isAIAssistantEnabled: !state.isAIAssistantEnabled
-    }))
+    })),
+    setLoading: (loading) => set({ loading })
 }));
