@@ -1,18 +1,13 @@
-import './App.css'
+// src/App.tsx
+import './App.css';
 import { Layout } from './components/layout/Layout';
 import { BorrowerPipeline } from './components/borrower/BorrowerPipeline';
 import { BorrowerDetails } from './components/borrower/BorrowerDetails';
 import { BrokerOverview } from './components/broker/BrokerOverview';
 import { useAppStore } from './store/useAppStore';
-import { useEffect } from 'react';
-import {
-    mockPipelineData,
-    mockBorrowerDetails,
-    mockBroker,
-    workflowSteps,
-    mockApiResponses
-} from './data/mockData';
+import { useEffect, useState } from 'react';
 import { Toaster, toast } from 'sonner';
+import { useApi } from './hooks/useApi';
 
 function App() {
     const {
@@ -27,51 +22,114 @@ function App() {
         setLoading
     } = useAppStore();
 
+    const api = useApi();
+    const [brokerData, setBrokerData] = useState(null);
+    const [workflowData, setWorkflowData] = useState([]);
+
     // Initialize data on component mount
     useEffect(() => {
+        let isMounted = true;
+
         const initializeData = async () => {
             try {
                 setLoading(true);
 
-                // Simulate API call for pipeline data
-                setBorrowerPipeline(mockPipelineData);
+                // Fetch pipeline data from API
+                const pipelineData = await api.fetchPipelineData('new');
+                if (isMounted && pipelineData) {
+                    setBorrowerPipeline({
+                        new: pipelineData,
+                        inReview: [],
+                        approved: []
+                    });
 
-                // Set initial active borrower if data exists
-                if (mockPipelineData.new.length > 0) {
-                    const initialId = mockPipelineData.new[0].id;
-                    const initialBorrower = mockBorrowerDetails[initialId];
-                    setActiveBorrower(initialBorrower);
+                    // Set initial active borrower if data exists
+                    if (pipelineData.length > 0) {
+                        const initialId = pipelineData[0].id;
+                        const initialBorrower = await api.fetchBorrowerDetails(initialId);
+                        if (isMounted && initialBorrower) {
+                            setActiveBorrower(initialBorrower);
+                        }
+                    }
+                }
+
+                // Fetch broker and workflow data
+                const broker = await api.fetchBrokerInfo();
+                const workflow = await api.fetchWorkflowSteps();
+                if (isMounted) {
+                    setBrokerData(broker);
+                    setWorkflowData(workflow || []);
                 }
             } catch (error) {
-                console.error('Error initializing data:', error);
-                toast.error('Failed to load initial data');
+                if (isMounted) {
+                    toast.error('Failed to load initial data');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         initializeData();
-    }, [setActiveBorrower, setBorrowerPipeline, setLoading]);
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    // Handle tab changes
+    const handleTabChange = async (tab: 'new' | 'inReview' | 'approved') => {
+        try {
+            setLoading(true);
+            setActiveTab(tab);
+            const data = await api.fetchPipelineData(tab);
+            if (data) {
+                setBorrowerPipeline(prev => ({
+                    ...prev,
+                    [tab]: data
+                }));
+            }
+        } catch (error) {
+            toast.error('Failed to load pipeline data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle borrower selection
+    const handleSelectBorrower = async (id: string) => {
+        try {
+            setLoading(true);
+            const borrower = await api.fetchBorrowerDetails(id);
+            if (borrower) {
+                setActiveBorrower(borrower);
+            }
+        } catch (error) {
+            toast.error('Failed to load borrower details');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Handle API actions
     const handleAction = async (action: 'requestDocs' | 'sendToValuer' | 'approve' | 'escalate') => {
         if (!activeBorrower) return;
 
         try {
-            let response: { success: boolean; message: string } | undefined;
-
+            let response;
             switch (action) {
                 case 'requestDocs':
-                    response = mockApiResponses.requestDocuments;
+                    response = await api.requestDocuments(activeBorrower.id);
                     break;
                 case 'sendToValuer':
-                    response = mockApiResponses.sendToValuer;
+                    response = await api.sendToValuer(activeBorrower.id);
                     break;
                 case 'approve':
-                    response = mockApiResponses.approveLoan;
+                    response = await api.approveLoan(activeBorrower.id);
                     break;
                 case 'escalate':
-                    response = mockApiResponses.escalate;
+                    response = await api.escalateToCreditCommittee(activeBorrower.id);
                     break;
             }
 
@@ -85,6 +143,18 @@ function App() {
         }
     };
 
+    // Handle AI assistant toggle
+    const handleToggleAIAssistant = async (enabled: boolean) => {
+        try {
+            const response = await api.toggleAIAssistant(enabled);
+            if (response?.success) {
+                toggleAIAssistant(enabled);
+            }
+        } catch (error) {
+            toast.error('Failed to toggle AI assistant');
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
             <Layout>
@@ -92,11 +162,8 @@ function App() {
                     {/* Left Panel - Borrower Pipeline */}
                     <div className="lg:col-span-1">
                         <BorrowerPipeline
-                            onSelectBorrower={(id) => {
-                                const borrower = mockBorrowerDetails[id];
-                                setActiveBorrower(borrower);
-                            }}
-                            onTabChange={setActiveTab}
+                            onSelectBorrower={handleSelectBorrower}
+                            onTabChange={handleTabChange}
                         />
                     </div>
 
@@ -111,10 +178,10 @@ function App() {
                     {/* Right Panel - Broker Overview */}
                     <div className="lg:col-span-1">
                         <BrokerOverview
-                            broker={mockBroker}
-                            workflowSteps={workflowSteps}
+                            broker={brokerData}
+                            workflowSteps={workflowData}
                             isAIAssistantEnabled={isAIAssistantEnabled}
-                            onToggleAIAssistant={toggleAIAssistant}
+                            onToggleAIAssistant={handleToggleAIAssistant}
                         />
                     </div>
                 </div>

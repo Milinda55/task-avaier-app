@@ -1,111 +1,87 @@
-import type {
-    BorrowerPipelineItem,
-    BorrowerDetail,
-    Broker,
-    WorkflowStep,
-    LoanStatus,
-    LoanType
-} from '@/types';
+import {
+    mockPipelineData,
+    mockBorrowerDetails,
+    mockBroker,
+    workflowSteps,
+    mockApiResponses
+} from '../data/mockData';
+import type {BorrowerDetail, BorrowerPipelineItem} from '../types';
 
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+// Simulate API delay for more realistic behavior
+const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 500));
 
-// Define response types for API actions
-type ApiResponse<T> = {
-    success: boolean;
-    data?: T;
-    error?: string;
-};
-
-type ActionResponse = {
-    success: boolean;
-    message: string;
-};
-
-class ApiService {
-    private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
-        const url = `${BASE_URL}${endpoint}`;
-        const config: RequestInit = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options?.headers,
-            },
-            ...options,
+export const ApiService = {
+    // Fetch pipeline data by status
+    async getPipelineData(status: 'new' | 'in_review' | 'approved'): Promise<{
+        approved: any[];
+        in_review: any[];
+        new: any[];
+        success: boolean;
+        data: {
+            id: string;
+            name: string;
+            loan_type: "Home Loan" | "Personal Loan" | "Auto Loan" | "Investment Loan";
+            amount: number;
+            status: "New" | "In Review" | "Approved" | "Renew"
+        }[] | BorrowerPipelineItem[]
+    }> {
+        await simulateDelay();
+        return {
+            approved: [], in_review: [], new: [],
+            success: true,
+            data: mockPipelineData[status]
         };
+    },
 
-        try {
-            const response = await fetch(url, config);
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-
-            const data: T = await response.json();
-            return { success: true, data };
-        } catch (error) {
-            console.error(`API request failed: ${endpoint}`, error);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : 'Unknown error occurred'
-            };
+    // Fetch borrower details by ID
+    async getBorrowerDetails(id: string): Promise<BorrowerDetail> {
+        await simulateDelay();
+        const borrower = mockBorrowerDetails[id];
+        if (!borrower) {
+            throw new Error('Borrower not found');
         }
-    }
+        return borrower;
+    },
 
-    // Borrower endpoints
-    async getBorrowerPipeline(): Promise<ApiResponse<{
-        new: BorrowerPipelineItem[];
-        in_review: BorrowerPipelineItem[];
-        approved: BorrowerPipelineItem[];
-    }>> {
-        return this.request('/borrowers/pipeline');
-    }
+    // Fetch broker information
+    async getBrokerInfo(): Promise<any> {
+        await simulateDelay();
+        return mockBroker;
+    },
 
-    async getBorrowerDetail(id: string): Promise<ApiResponse<BorrowerDetail>> {
-        return this.request(`/borrowers/${id}`);
-    }
+    // Fetch workflow steps
+    async getWorkflowSteps(): Promise<any[]> {
+        await simulateDelay();
+        return workflowSteps;
+    },
 
-    async requestDocuments(id: string): Promise<ApiResponse<ActionResponse>> {
-        return this.request(`/borrowers/${id}/request-documents`, {
-            method: 'POST',
-        });
-    }
+    // Action: Request documents
+    async requestDocuments(borrowerId: string): Promise<any> {
+        await simulateDelay();
+        return mockApiResponses.requestDocuments;
+    },
 
-    async sendToValuer(id: string): Promise<ApiResponse<ActionResponse>> {
-        return this.request(`/borrowers/${id}/send-valuer`, {
-            method: 'POST',
-        });
-    }
+    // Action: Send to valuer
+    async sendToValuer(borrowerId: string): Promise<any> {
+        await simulateDelay();
+        return mockApiResponses.sendToValuer;
+    },
 
-    async approveLoan(id: string): Promise<ApiResponse<ActionResponse>> {
-        return this.request(`/borrowers/${id}/approve`, {
-            method: 'POST',
-        });
-    }
+    // Action: Approve loan
+    async approveLoan(borrowerId: string): Promise<any> {
+        await simulateDelay();
+        return mockApiResponses.approveLoan;
+    },
 
-    async escalateToCredit(id: string): Promise<ApiResponse<ActionResponse>> {
-        return this.request(`/borrowers/${id}/escalate`, {
-            method: 'POST',
-        });
-    }
+    // Action: Escalate to credit committee
+    async escalateToCreditCommittee(borrowerId: string): Promise<any> {
+        await simulateDelay();
+        return mockApiResponses.escalate;
+    },
 
-    // Broker endpoints
-    async getBrokerInfo(id: string): Promise<ApiResponse<Broker>> {
-        return this.request(`/broker/${id}`);
+    // Toggle AI assistant
+    async toggleAIAssistant(enabled: boolean): Promise<any> {
+        await simulateDelay();
+        return { success: true, enabled };
     }
-
-    async getOnboardingWorkflow(): Promise<ApiResponse<WorkflowStep[]>> {
-        return this.request('/onboarding/workflow');
-    }
-
-    // Utility methods
-    async getLoanTypes(): Promise<ApiResponse<LoanType[]>> {
-        return this.request('/meta/loan-types');
-    }
-
-    async getStatusOptions(): Promise<ApiResponse<LoanStatus[]>> {
-        return this.request('/meta/status-options');
-    }
-}
-
-export const apiService = new ApiService();
-export default apiService;
+};

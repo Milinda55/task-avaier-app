@@ -1,52 +1,41 @@
+// src/store/useAppStore.ts
 import { create } from 'zustand';
-import type {
-    BorrowerPipelineItem,
-    BorrowerDetail,
-    LoanStatus
-} from '../types';
+import type {BorrowerDetail, BorrowerPipelineItem} from '../types';
 
-interface AppState {
-    // Borrower state
-    activeBorrower: BorrowerDetail | null;
+type TabStatus = 'new' | 'inReview' | 'approved';
+
+interface AppStore {
+    activeTab: TabStatus;
+    setActiveTab: (tab: TabStatus) => void;
     borrowerPipeline: {
         new: BorrowerPipelineItem[];
-        in_review: BorrowerPipelineItem[];
+        inReview: BorrowerPipelineItem[];
         approved: BorrowerPipelineItem[];
     };
-    activeTab: LoanStatus;
-    loading: boolean;
-
-    // UI state
-    isAIAssistantEnabled: boolean;
-
-    // Actions
+    setBorrowerPipeline: (data: (prev: any) => any) => void;
+    activeBorrower: BorrowerDetail | null;
     setActiveBorrower: (borrower: BorrowerDetail | null) => void;
-    setActiveTab: (tab: LoanStatus) => void;
-    setBorrowerPipeline: (
-        pipeline: AppState['borrowerPipeline']
-    ) => void;
+    isAIAssistantEnabled: boolean;
+    toggleAIAssistant: (enabled?: boolean) => void;
+    loading: boolean;
     setLoading: (loading: boolean) => void;
-    toggleAIAssistant: () => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-    // Initial state
-    activeBorrower: null,
-    loading: false,
+export const useAppStore = create<AppStore>((set) => ({
+    activeTab: 'new',
+    setActiveTab: (tab) => set({ activeTab: tab }),
     borrowerPipeline: {
         new: [],
-        in_review: [],
+        inReview: [],
         approved: []
     },
-    activeTab: 'New',
-    isAIAssistantEnabled: false,
-
-    // Actions
+    setBorrowerPipeline: (data) => set({ setBorrowerPipeline: data }),
+    activeBorrower: null,
     setActiveBorrower: (borrower) => set({ activeBorrower: borrower }),
-    setActiveTab: (tab) => set({ activeTab: tab }),
-    setBorrowerPipeline: (pipeline) => set({ borrowerPipeline: pipeline }),
-    toggleAIAssistant: () => set((state) => ({
-        isAIAssistantEnabled: !state.isAIAssistantEnabled
+    isAIAssistantEnabled: false,
+    toggleAIAssistant: (enabled) => set((state) => ({
+        isAIAssistantEnabled: enabled !== undefined ? enabled : !state.isAIAssistantEnabled
     })),
+    loading: false,
     setLoading: (loading) => set({ loading })
 }));
