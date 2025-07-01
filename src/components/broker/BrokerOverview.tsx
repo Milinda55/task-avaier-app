@@ -29,7 +29,6 @@ export const BrokerOverview = ({
 
     return (
         <Card className={`p-0 ${className} bg-gradient-to-br from-white to-slate-50 shadow-lg border-0 overflow-hidden`}>
-            {/* Enhanced Broker Info Section */}
             <div className="p-6 bg-gradient-to-r from-slate-800 to-slate-700 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
                 <div className="relative space-y-4">

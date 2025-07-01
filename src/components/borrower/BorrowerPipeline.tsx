@@ -177,7 +177,6 @@ export const BorrowerPipeline: React.FC<BorrowerPipelineProps> = ({
                     </div>
                 </Tabs>
 
-                {/* Enhanced Filter Section */}
                 <div className="border-t border-slate-100 bg-slate-50/50 backdrop-blur-sm p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">

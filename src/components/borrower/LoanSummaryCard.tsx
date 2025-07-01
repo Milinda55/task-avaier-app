@@ -56,7 +56,7 @@ export const LoanSummaryCard = ({
         {
             icon: <Calendar className="h-4 w-4" />,
             label: 'Term',
-            value: '30 years' // Could be dynamic from API
+            value: '30 years'
         },
         {
             icon: <UserCheck className="h-4 w-4" />,

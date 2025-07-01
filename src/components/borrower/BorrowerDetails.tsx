@@ -47,7 +47,6 @@ export const BorrowerDetails = ({
         );
     }
 
-    // Enhanced Borrower Details Component
     return (
         <Card className="h-full flex flex-col bg-gradient-to-br from-white to-slate-50 shadow-xl border-0 overflow-hidden">
             <CardHeader className="pb-4 bg-gradient-to-r from-slate-900 to-slate-700 text-white relative overflow-hidden">
@@ -83,7 +82,6 @@ export const BorrowerDetails = ({
             </CardHeader>
 
             <CardContent className="flex-1 space-y-6 overflow-y-auto p-4">
-                {/* Enhanced AI Risk Assessment */}
                 <Collapsible defaultOpen>
                     <div className="rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 shadow-sm">
                         <CollapsibleTrigger className="w-full p-4 hover:bg-red-50/50 flex justify-between items-center transition-colors rounded-t-xl">
@@ -144,7 +142,6 @@ export const BorrowerDetails = ({
                     </div>
                 </Collapsible>
 
-                {/* Enhanced Loan Summary */}
                 <section className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
