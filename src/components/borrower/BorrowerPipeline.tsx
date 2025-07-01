@@ -80,7 +80,6 @@ export const BorrowerPipeline: React.FC<BorrowerPipelineProps> = ({
         </div>
     );
 
-    // Enhanced Borrower Pipeline Component
     return (
         <Card className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-white shadow-lg border-0">
             <CardHeader className="pb-4 bg-white/50 backdrop-blur-sm border-b border-slate-100">
