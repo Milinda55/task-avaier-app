@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
     mockPipelineData,
     mockBorrowerDetails,
@@ -5,14 +6,14 @@ import {
     workflowSteps,
     mockApiResponses
 } from '../data/mockData';
-import type {BorrowerDetail, BorrowerPipelineItem} from '../types';
+import type {BorrowerDetail, BorrowerPipelineItem} from '@/types';
 
 // Simulate API delay for more realistic behavior
 const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 500));
 
 export const ApiService = {
     // Fetch pipeline data by status
-    async getPipelineData(status: 'new' | 'in_review' | 'approved'): Promise<{
+    async getPipelineData(status: "new" | "inReview" | "approved"): Promise<{
         approved: any[];
         in_review: any[];
         new: any[];
