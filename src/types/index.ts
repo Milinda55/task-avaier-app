@@ -44,3 +44,9 @@ export interface PipelineResponse {
     in_review: BorrowerPipelineItem[];
     approved: BorrowerPipelineItem[];
 }
+
+export interface BorrowerPipelineData {
+    new: BorrowerPipelineItem[];
+    in_review: BorrowerPipelineItem[];
+    approved: BorrowerPipelineItem[];
+}

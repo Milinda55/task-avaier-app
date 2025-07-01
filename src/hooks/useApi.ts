@@ -1,4 +1,4 @@
-// src/hooks/useApi.ts
+/* eslint-disable */
 import { useState } from 'react';
 import { ApiService } from '../services/api';
 

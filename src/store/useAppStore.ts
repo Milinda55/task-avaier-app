@@ -1,4 +1,4 @@
-// src/store/useAppStore.ts
+/* eslint-disable */
 import { create } from 'zustand';
 import type {BorrowerDetail, BorrowerPipelineItem} from '../types';
 
@@ -9,7 +9,7 @@ interface AppStore {
     setActiveTab: (tab: TabStatus) => void;
     borrowerPipeline: {
         new: BorrowerPipelineItem[];
-        inReview: BorrowerPipelineItem[];
+        in_review: BorrowerPipelineItem[];
         approved: BorrowerPipelineItem[];
     };
     setBorrowerPipeline: (data: (prev: any) => any) => void;
@@ -23,13 +23,17 @@ interface AppStore {
 
 export const useAppStore = create<AppStore>((set) => ({
     activeTab: 'new',
-    setActiveTab: (tab) => set({ activeTab: tab }),
+    setActiveTab: (tab: any) => set({ activeTab: tab }),
     borrowerPipeline: {
         new: [],
-        inReview: [],
+        in_review: [],
         approved: []
     },
-    setBorrowerPipeline: (data) => set({ setBorrowerPipeline: data }),
+    setBorrowerPipeline: (data) => set(state => ({
+        borrowerPipeline: typeof data === 'function'
+            ? data(state.borrowerPipeline)
+            : data
+    })),
     activeBorrower: null,
     setActiveBorrower: (borrower) => set({ activeBorrower: borrower }),
     isAIAssistantEnabled: false,

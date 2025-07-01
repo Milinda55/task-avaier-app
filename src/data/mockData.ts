@@ -73,6 +73,24 @@ export const mockBorrowerDetails: Record<string, BorrowerDetail> = {
         ai_flags: [
             "Unstable employment history"
         ]
+    },
+    "3": {
+        id: "3",
+        name: "Lisa Carter",
+        email: "lisa.carter@example.com",
+        phone: "(355)555-1234",
+        loan_amount: 450000,
+        loan_type: "Home Loan",
+        status: "New",
+        employment: "Self-Employed",
+        income: 85000,
+        existing_loan: 15000,
+        credit_score: 680,
+        source_of_funds: "Savings",
+        risk_signal: "Variable income history",
+        ai_flags: [
+            "Unstable employment history"
+        ]
     }
 };
 
